@@ -17,7 +17,7 @@ const WelcomePage: React.FC = () => {
       <Head>
         <title>Welcome to COB Scheduler</title>
         <meta name="description" content="Welcome page for the COB Runner Scheduler." />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicon1.ico" />
       </Head>
       <div className={styles.container}>
         <h1 className={styles.title1}>Nib International Bank</h1>
