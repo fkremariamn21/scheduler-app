@@ -1,124 +1,129 @@
 /* styles/SchedulerForm.module.css */
 .container {
-  padding: 2rem;
-  max-width: 800px;
-  margin: 2rem auto;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  background-color: #f9f9f9;
+padding: 2rem;
+max-width: 800px;
+margin: 2rem auto;
+border: 1px solid #ddd;
+border-radius: 8px;
+box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+background-color: #f9f9f9;
 }
 
 .title {
-  text-align: center;
-  color: #333;
-  font-size: x-large;
+text-align: center;
+color: #333;
+font-size: x-large;
 }
 
 .title1 {
-  text-align: center;
-  color: #8B4513;
-  font-size: xx-large;
+text-align: center;
+color: #8B4513;
+font-size: xx-large;
 }
 
 .title2 {
-  text-align: center;
-  color: #FFD700;
-  font-size: xx-large;
+text-align: center;
+color: #FFD700;
+font-size: xx-large;
 }
 
 .form {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+display: flex;
+flex-direction: column;
+gap: 1.5rem;
 }
-
+.shortInput{
+   width: 150px;
+}
+.shortInputHoliday{
+   width: 500px;
+}
 .inputGroup {
-  display: flex;
-  flex-direction: column;
+display: flex;
+flex-direction: column;
 }
 
 .inputGroup label {
-  margin-bottom: 0.5rem;
-  font-weight: bold;
-  color: #555;
+margin-bottom: 0.5rem;
+font-weight: bold;
+color: #555;
 }
 
 .inputGroup input,
 .inputGroup textarea {
-  padding: 0.75rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 1rem;
+ padding: 0.75rem;
+border: 1px solid #ccc;
+border-radius: 4px;
+font-size: 1rem;
 }
 
 .inputGroup textarea {
-  resize: vertical;
+resize: vertical;
 }
 
 .button {
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
-  font-weight: bold;
-  color: #fff;
-  background-color: #8B4513;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+padding: 0.75rem 1.5rem;
+font-size: 1rem;
+font-weight: bold;
+color: #fff;
+background-color: #8B4513;
+border: none;
+border-radius: 4px;
+cursor: pointer;
+transition: background-color 0.3s ease;
 }
 
 .button:hover:not(:disabled) {
-  background-color: #005bb5;
+background-color: #005bb5;
 }
 
 .button:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
+background-color: #ccc;
+cursor: not-allowed;
 }
 
 .error {
-  color: #e3342f;
-  text-align: center;
-  margin-top: 1rem;
+color: #e3342f;
+ text-align: center;
+margin-top: 1rem;
 }
 
 .results {
-  margin-top: 2rem;
-  border-top: 2px solid #eee;
-  padding-top: 2rem;
+margin-top: 2rem;
+border-top: 2px solid #eee;
+padding-top: 2rem;
 }
 
 .subtitle {
-  text-align: center;
-  margin-bottom: 1.5rem;
-  color: #333;
+text-align: center;
+margin-bottom: 1.5rem;
+color: #333;
 }
 
 .scheduleTable {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 1rem;
+width: 100%;
+border-collapse: collapse;
+margin-bottom: 1rem;
 }
 
 .scheduleTable th,
 .scheduleTable td {
-  border: 1px solid #ddd;
-  padding: 0.75rem;
-  text-align: left;
+border: 1px solid #ddd;
+padding: 0.75rem;
+text-align: left;
 }
 
 .scheduleTable th {
-  background-color: #f2f2f2;
-  font-weight: bold;
+background-color: #f2f2f2;
+font-weight: bold;
 }
 
-/* ⭐ New styles for the buttons and footer */
+/* ⭐ The updated styles for the button container and back button */
 .buttonContainer {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-top: 1.5rem;
+display: flex;
+justify-content: space-between;
+gap: 1rem;
+ margin-top: 1.5rem;
 }
 
 .backButton {
@@ -126,13 +131,13 @@
 }
 
 .backButton:hover {
-  background-color: #5a6268;
+   background-color: #5a6268;
 }
 
-.footer { 
-  margin-top: 2rem;
-  padding: 1rem;
-  border-top: 1px solid #ccc;
-  text-align: center;
-  width: 100%;
+.footer {
+margin-top: 2rem;
+padding: 1rem;
+border-top: 1px solid #ccc;
+text-align: center; 
+width: 100%;
 }
