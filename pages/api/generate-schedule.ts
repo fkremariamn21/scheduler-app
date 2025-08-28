@@ -2,7 +2,7 @@
 
 import { getDaysInMonth, isSunday, format } from 'date-fns';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import * as XLSX from 'xlsx';
+import * as XLSX from 'xlsx'; // Import the XLSX library
 
 // Sample holidays.
 const staticHolidays = [
@@ -34,7 +34,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 
   const { month, year, employees, holidays, numAssignees } = req.body;
-  const download = req.query.download === 'true';
+  const download = req.query.download === 'true'; // Check for download query parameter
 
   if (!month || !year || !Array.isArray(employees) || employees.length < numAssignees) {
     return res.status(400).json({ message: `Invalid input: month, year, and at least ${numAssignees} employees are required.` });
@@ -75,7 +75,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       schedule[format(currentDate, 'yyyy-MM-dd')] = assigned;
     }
 
-    // ⭐ If download is requested, generate and send the Excel file
+    // ⭐ If download is requested, generate the Excel file in memory and send it
     if (download) {
       const worksheetData = [
         ['Date', 'Day', 'Assigned Persons'],
@@ -85,11 +85,9 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
           return [date, dayOfWeek, (persons as string[]).join(', ')];
         }),
       ];
-
       const workbook = XLSX.utils.book_new();
       const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
       XLSX.utils.book_append_sheet(workbook, worksheet, 'COB Schedule');
-
       const buffer = XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' });
 
       res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
