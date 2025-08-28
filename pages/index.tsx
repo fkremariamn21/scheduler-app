@@ -24,7 +24,7 @@ const WelcomePage: React.FC = () => {
         <h1 className={styles.title2}>IS Application Department</h1>
         <h1 className={styles.title3}>Monthly COB Scheduler</h1>
         <div className={styles.logoContainer}>
-          <Image src="/logo.png" alt="Nib International Bank Logo" width={200} height={200} />
+          <Image src="/logo1.png" alt="Nib International Bank Logo" width={200} height={200} />
         </div>
         <button className={styles.button} onClick={handleContinue}>
           Continue
