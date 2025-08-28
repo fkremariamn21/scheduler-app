@@ -14,8 +14,9 @@ const SchedulerForm: React.FC = () => {
   const [schedule, setSchedule] = useState<Schedule | null>(null);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  // ⭐ New state variable for holidays
   const [holidays, setHolidays] = useState('');
+  // ⭐ New state variable for the number of assignees
+  const [numAssignees, setNumAssignees] = useState<number>(2);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,11 +25,10 @@ const SchedulerForm: React.FC = () => {
     setIsLoading(true);
 
     const employeeList = employees.split(',').map(emp => emp.trim()).filter(emp => emp.length > 0);
-    // ⭐ Parse holidays from the input
     const holidayList = holidays.split(',').map(h => h.trim()).filter(h => h.length > 0);
 
-    if (employeeList.length < 2) {
-      setError('Please enter at least two employees.');
+    if (employeeList.length < numAssignees) {
+      setError(`Please enter at least ${numAssignees} employees.`);
       setIsLoading(false);
       return;
     }
@@ -43,7 +43,8 @@ const SchedulerForm: React.FC = () => {
           month: Number(month),
           year: Number(year),
           employees: employeeList,
-          holidays: holidayList, // ⭐ Include holidays in the API request
+          holidays: holidayList,
+          numAssignees: numAssignees, // ⭐ Pass numAssignees to the API
         }),
       });
 
@@ -65,7 +66,9 @@ const SchedulerForm: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>COB Runner Scheduler</h1>
+      <h1 className={styles.title1}>Nib International Bank</h1>
+      <h1 className={styles.title2}>IS Application Department</h1>
+      <h1 className={styles.title}>Monthly COB Scheduler</h1>
       <form className={styles.form} onSubmit={handleSubmit}>
         <div className={styles.inputGroup}>
           <label htmlFor="employees">Employees (comma-separated):</label>
@@ -74,7 +77,18 @@ const SchedulerForm: React.FC = () => {
             value={employees}
             onChange={(e) => setEmployees(e.target.value)}
             rows={4}
-            placeholder="e.g., Alice, Bob, Charlie"
+            placeholder="e.g., Fkremariam, Kalkidan, Alemayehu,..."
+            required
+          />
+        </div>
+        <div className={styles.inputGroup}>
+          <label htmlFor="numAssignees">Number of Employees per day:</label>
+          <input
+            id="numAssignees"
+            type="number"
+            value={numAssignees}
+            onChange={(e) => setNumAssignees(parseInt(e.target.value, 10))}
+            min="1"
             required
           />
         </div>

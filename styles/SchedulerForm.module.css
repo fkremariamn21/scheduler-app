@@ -12,8 +12,18 @@
 .title {
   text-align: center;
   color: #333;
+  font-size: x-large;
 }
-
+.title1 {
+  text-align: center;
+  color: #8B4513;
+  font-size: xx-large;
+}
+.title2 {
+  text-align: center;
+  color: #FFD700;
+  font-size: xx-large;
+}
 .form {
   display: flex;
   flex-direction: column;
@@ -48,7 +58,7 @@
   font-size: 1rem;
   font-weight: bold;
   color: #fff;
-  background-color: #0070f3;
+  background-color: #8B4513;
   border: none;
   border-radius: 4px;
   cursor: pointer;

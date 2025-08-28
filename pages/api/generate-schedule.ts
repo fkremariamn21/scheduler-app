@@ -34,22 +34,19 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     return res.status(405).json({ message: 'Method Not Allowed' });
   }
 
-  // Extract and validate input
-  const { month, year, employees, holidays } = req.body; // ⭐ Get holidays from the body
+  const { month, year, employees, holidays, numAssignees } = req.body; // ⭐ Get numAssignees from the body
 
   if (
     !month ||
     !year ||
     !Array.isArray(employees) ||
-    employees.length < 2
+    employees.length < numAssignees
   ) {
-    return res.status(400).json({ message: 'Invalid input: month, year, and at least two employees are required.' });
+    return res.status(400).json({ message: `Invalid input: month, year, and at least ${numAssignees} employees are required.` });
   }
 
-  // ⭐ Combine static and user-provided holidays
   const allHolidays = [...staticHolidays, ...(holidays || [])];
 
-  // Function to check if a date is a business day
   const isBusinessDay = (date: Date): boolean => {
     const formattedDate = format(date, 'yyyy-MM-dd');
     return !isSunday(date) && !allHolidays.includes(formattedDate);
@@ -58,44 +55,45 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const numDaysInMonth = getDaysInMonth(new Date(year, month - 1));
     const schedule: Schedule = {};
-    let lastAssigned: string[] = [];
+    
+    const assignmentCounts: { [key: string]: number } = employees.reduce((acc, emp) => ({ ...acc, [emp]: 0 }), {});
 
     for (let day = 1; day <= numDaysInMonth; day++) {
       const currentDate = new Date(year, month - 1, day);
 
       if (!isBusinessDay(currentDate)) {
-        continue; // Skip non-business days
+        continue;
       }
 
-      // Available employees for the day (exclude last assigned)
-      let availableEmployees = employees.filter(emp => !lastAssigned.includes(emp));
+      // Sort employees by their current assignment count
+      let availableEmployees = [...employees].sort((a, b) => assignmentCounts[a] - assignmentCounts[b]);
 
-      // If not enough employees, reset to full list
-      if (availableEmployees.length < 2) {
+      // ⭐ Use the user-provided number of assignees
+      if (availableEmployees.length < numAssignees) {
         availableEmployees = [...employees];
+        shuffleArray(availableEmployees);
       }
 
-      shuffleArray(availableEmployees);
-
-      const assigned = availableEmployees.slice(0, 2);
+      // ⭐ Assign the employees with the lowest counts
+      const assigned = availableEmployees.slice(0, numAssignees);
+      
+      // Update the assignment counts for the newly assigned employees
+      assigned.forEach(emp => {
+          assignmentCounts[emp]++;
+      });
 
       schedule[format(currentDate, 'yyyy-MM-dd')] = assigned;
-      lastAssigned = assigned;
     }
 
-    // ⭐ Save the generated schedule to a file
     const schedulesDir = path.join(process.cwd(), 'schedules');
     const filename = `schedule-${year}-${month}.json`;
 
-    // Ensure the 'schedules' directory exists
     if (!fs.existsSync(schedulesDir)) {
       fs.mkdirSync(schedulesDir);
     }
 
-    // Write the schedule to the JSON file
     fs.writeFileSync(path.join(schedulesDir, filename), JSON.stringify(schedule, null, 2));
 
-    // Send the schedule back to the frontend
     return res.status(200).json({ schedule });
 
   } catch (error) {
