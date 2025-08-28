@@ -1,7 +1,10 @@
 {
-  "/_app": "pages/_app.js",
+  "/Scheduler": "pages/Scheduler.html",
+  "/api/download-schedule": "pages/api/download-schedule.js",
+  "/api/generate-schedule": "pages/api/generate-schedule.js",
+  "/": "pages/index.html",
   "/_error": "pages/_error.js",
+  "/_app": "pages/_app.js",
   "/_document": "pages/_document.js",
-  "/Scheduler": "pages/Scheduler.js",
-  "/api/generate-schedule": "pages/api/generate-schedule.js"
+  "/404": "pages/404.html"
 }
