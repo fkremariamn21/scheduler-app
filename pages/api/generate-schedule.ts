@@ -34,7 +34,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     return res.status(405).json({ message: 'Method Not Allowed' });
   }
 
-  const { month, year, employees, holidays, numAssignees } = req.body; // ⭐ Get numAssignees from the body
+  const { month, year, employees, holidays, numAssignees } = req.body;
 
   if (
     !month ||
@@ -55,7 +55,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const numDaysInMonth = getDaysInMonth(new Date(year, month - 1));
     const schedule: Schedule = {};
-    
     const assignmentCounts: { [key: string]: number } = employees.reduce((acc, emp) => ({ ...acc, [emp]: 0 }), {});
 
     for (let day = 1; day <= numDaysInMonth; day++) {
@@ -65,19 +64,15 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         continue;
       }
 
-      // Sort employees by their current assignment count
       let availableEmployees = [...employees].sort((a, b) => assignmentCounts[a] - assignmentCounts[b]);
 
-      // ⭐ Use the user-provided number of assignees
       if (availableEmployees.length < numAssignees) {
         availableEmployees = [...employees];
         shuffleArray(availableEmployees);
       }
 
-      // ⭐ Assign the employees with the lowest counts
       const assigned = availableEmployees.slice(0, numAssignees);
       
-      // Update the assignment counts for the newly assigned employees
       assigned.forEach(emp => {
           assignmentCounts[emp]++;
       });
@@ -85,16 +80,19 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       schedule[format(currentDate, 'yyyy-MM-dd')] = assigned;
     }
 
-    const schedulesDir = path.join(process.cwd(), 'schedules');
-    const filename = `schedule-${year}-${month}.json`;
+    const schedulesDir = path.join(__dirname, '..', 'schedules');
+    // ⭐ Change 1: Add a timestamp to the filename
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const filename = `schedule-${year}-${month}-${timestamp}.json`;
 
     if (!fs.existsSync(schedulesDir)) {
-      fs.mkdirSync(schedulesDir);
+      fs.mkdirSync(schedulesDir, { recursive: true });
     }
 
     fs.writeFileSync(path.join(schedulesDir, filename), JSON.stringify(schedule, null, 2));
-
-    return res.status(200).json({ schedule });
+    
+    // ⭐ Change 2: Return the filename to the frontend
+    return res.status(200).json({ schedule, filename });
 
   } catch (error) {
     console.error('Schedule generation error:', error);

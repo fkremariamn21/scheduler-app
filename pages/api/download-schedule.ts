@@ -7,20 +7,23 @@ import * as XLSX from 'xlsx';
 import { parseISO, format } from 'date-fns';
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { month, year } = req.query;
+  // ⭐ Change 1: Get the filename directly from the query
+  const { filename } = req.query;
 
-  // 1. Validate the query parameters
-  if (!month || !year) {
-    return res.status(400).json({ message: 'Month and year are required.' });
+  // 1. Validate the query parameter
+  if (!filename) {
+    return res.status(400).json({ message: 'Filename is required.' });
   }
 
   // 2. Define the path to the saved schedule file
-  const filename = `schedule-${year}-${month}.json`;
-  const filePath = path.join(process.cwd(), 'schedules', filename);
+  // ⭐ Change 2: Use the full filename directly
+  const schedulesDir = path.join(__dirname, '..', 'schedules');
+  const filePath = path.join(schedulesDir, filename as string);
 
   try {
     // 3. Check if the file exists before attempting to read it
     if (!fs.existsSync(filePath)) {
+      console.error(`Download Error: File not found at ${filePath}`);
       return res.status(404).json({ message: 'Schedule not found. Please generate it first.' });
     }
 
@@ -29,13 +32,11 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     const schedule = JSON.parse(scheduleData);
 
     // 5. Convert the JSON schedule to a format compatible with XLSX
-    // We add 'Day' as the second header
     const worksheetData = [
       ['Date', 'Day', 'Assigned Persons'],
       ...Object.entries(schedule).map(([date, persons]) => {
-        // Parse the date string and format it to get the day name
         const dateObj = parseISO(date);
-        const dayOfWeek = format(dateObj, 'EEEE'); // 'EEEE' formats the day as a full name (e.g., 'Monday')
+        const dayOfWeek = format(dateObj, 'EEEE');
         return [date, dayOfWeek, (persons as string[]).join(', ')];
       }),
     ];
@@ -50,7 +51,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
     // 8. Set the appropriate headers for an Excel file download
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    res.setHeader('Content-Disposition', `attachment; filename="cob-schedule-${year}-${month}.xlsx"`);
+    res.setHeader('Content-Disposition', `attachment; filename="${filename.toString().replace(/\.json$/, '.xlsx')}"`);
     
     // 9. Send the file buffer as the response
     res.send(buffer);

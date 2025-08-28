@@ -1,4 +1,5 @@
 // components/SchedulerForm.tsx
+
 import React, { useState } from 'react';
 import styles from '../styles/SchedulerForm.module.css';
 import { parseISO, format } from 'date-fns';
@@ -15,13 +16,15 @@ const SchedulerForm: React.FC = () => {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [holidays, setHolidays] = useState('');
-  // ⭐ New state variable for the number of assignees
   const [numAssignees, setNumAssignees] = useState<number>(2);
+  // ⭐ New state variable for the generated filename
+  const [generatedFilename, setGeneratedFilename] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setSchedule(null);
+    setGeneratedFilename(null); // Reset filename
     setIsLoading(true);
 
     const employeeList = employees.split(',').map(emp => emp.trim()).filter(emp => emp.length > 0);
@@ -44,7 +47,7 @@ const SchedulerForm: React.FC = () => {
           year: Number(year),
           employees: employeeList,
           holidays: holidayList,
-          numAssignees: numAssignees, // ⭐ Pass numAssignees to the API
+          numAssignees: numAssignees,
         }),
       });
 
@@ -53,6 +56,7 @@ const SchedulerForm: React.FC = () => {
         throw new Error(data.message || 'Failed to generate schedule.');
       }
       setSchedule(data.schedule);
+      setGeneratedFilename(data.filename); // ⭐ Save the new filename
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An unexpected error occurred.');
     } finally {
@@ -61,7 +65,12 @@ const SchedulerForm: React.FC = () => {
   };
 
   const handleDownload = () => {
-    window.location.href = `/api/download-schedule?month=${month}&year=${year}`;
+    if (generatedFilename) {
+      // ⭐ Use the generated filename for the download link
+      window.location.href = `/api/download-schedule?filename=${generatedFilename}`;
+    } else {
+      setError('Please generate a schedule first.');
+    }
   };
 
   return (
