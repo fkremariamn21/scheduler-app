@@ -22,4 +22,8 @@
     "@types/xlsx": "^0.0.36",
     "typescript": "^5.9.2"
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> a42e40b (first commint1)
