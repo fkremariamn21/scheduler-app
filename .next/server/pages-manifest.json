@@ -2,6 +2,6 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/": "pages/index.js",
-  "/Scheduler": "pages/Scheduler.js"
+  "/Scheduler": "pages/Scheduler.js",
+  "/api/generate-schedule": "pages/api/generate-schedule.js"
 }
