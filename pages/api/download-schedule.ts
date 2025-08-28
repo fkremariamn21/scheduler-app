@@ -4,6 +4,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import fs from 'fs';
 import path from 'path';
 import * as XLSX from 'xlsx';
+import { parseISO, format } from 'date-fns';
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const { month, year } = req.query;
@@ -28,9 +29,15 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     const schedule = JSON.parse(scheduleData);
 
     // 5. Convert the JSON schedule to a format compatible with XLSX
+    // We add 'Day' as the second header
     const worksheetData = [
-      ['Date', 'Assigned Persons'],
-      ...Object.entries(schedule).map(([date, persons]) => [date, (persons as string[]).join(', ')]),
+      ['Date', 'Day', 'Assigned Persons'],
+      ...Object.entries(schedule).map(([date, persons]) => {
+        // Parse the date string and format it to get the day name
+        const dateObj = parseISO(date);
+        const dayOfWeek = format(dateObj, 'EEEE'); // 'EEEE' formats the day as a full name (e.g., 'Monday')
+        return [date, dayOfWeek, (persons as string[]).join(', ')];
+      }),
     ];
 
     // 6. Create a new workbook and add the worksheet
@@ -47,6 +54,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     
     // 9. Send the file buffer as the response
     res.send(buffer);
+
   } catch (error) {
     console.error('Download error:', error);
     return res.status(500).json({ message: 'Internal server error.' });

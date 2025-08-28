@@ -1,6 +1,7 @@
 // components/SchedulerForm.tsx
 import React, { useState } from 'react';
 import styles from '../styles/SchedulerForm.module.css';
+import { parseISO, format } from 'date-fns';
 
 interface Schedule {
   [date: string]: string[];
@@ -89,7 +90,7 @@ const SchedulerForm: React.FC = () => {
           <input
             id="year"
             type="number"
-            value={year}
+            value={year} 
             onChange={(e) => setYear(e.target.value)}
             min="2024"
             required
@@ -109,16 +110,22 @@ const SchedulerForm: React.FC = () => {
             <thead>
               <tr>
                 <th>Date</th>
+                <th>Day</th>
                 <th>Assigned Persons</th>
               </tr>
             </thead>
             <tbody>
-              {Object.entries(schedule).map(([date, persons]) => (
-                <tr key={date}>
-                  <td>{date}</td>
-                  <td>{persons.join(', ')}</td>
-                </tr>
-              ))}
+              {Object.entries(schedule).map(([date, persons]) => {
+                const dateObj = parseISO(date);
+                const dayOfWeek = format(dateObj, 'EEEE');
+                return (
+                  <tr key={date}>
+                    <td>{date}</td>
+                    <td>{dayOfWeek}</td>
+                    <td>{persons.join(', ')}</td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
           <button className={styles.button} onClick={handleDownload}>
