@@ -1,6 +1,6 @@
 // pages/api/generate-schedule.ts
 
-import { getDaysInMonth, isSunday, format } from 'date-fns';
+import { getDaysInMonth, parseISO, isSunday, format } from 'date-fns';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import * as XLSX from 'xlsx'; // Import the XLSX library
 
