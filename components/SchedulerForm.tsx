@@ -14,6 +14,8 @@ const SchedulerForm: React.FC = () => {
   const [schedule, setSchedule] = useState<Schedule | null>(null);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  // ⭐ New state variable for holidays
+  const [holidays, setHolidays] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,6 +24,8 @@ const SchedulerForm: React.FC = () => {
     setIsLoading(true);
 
     const employeeList = employees.split(',').map(emp => emp.trim()).filter(emp => emp.length > 0);
+    // ⭐ Parse holidays from the input
+    const holidayList = holidays.split(',').map(h => h.trim()).filter(h => h.length > 0);
 
     if (employeeList.length < 2) {
       setError('Please enter at least two employees.');
@@ -39,6 +43,7 @@ const SchedulerForm: React.FC = () => {
           month: Number(month),
           year: Number(year),
           employees: employeeList,
+          holidays: holidayList, // ⭐ Include holidays in the API request
         }),
       });
 
@@ -74,6 +79,16 @@ const SchedulerForm: React.FC = () => {
           />
         </div>
         <div className={styles.inputGroup}>
+          <label htmlFor="holidays">Additional Holidays (comma-separated, YYYY-MM-DD):</label>
+          <textarea
+            id="holidays"
+            value={holidays}
+            onChange={(e) => setHolidays(e.target.value)}
+            rows={2}
+            placeholder="e.g., 2025-01-01, 2025-12-25"
+          />
+        </div>
+        <div className={styles.inputGroup}>
           <label htmlFor="month">Month:</label>
           <input
             id="month"
@@ -90,7 +105,7 @@ const SchedulerForm: React.FC = () => {
           <input
             id="year"
             type="number"
-            value={year} 
+            value={year}
             onChange={(e) => setYear(e.target.value)}
             min="2024"
             required

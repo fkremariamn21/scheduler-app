@@ -1,12 +1,12 @@
 // pages/api/generate-schedule.ts
 
-import { getDaysInMonth, isSunday, isSaturday, format } from 'date-fns';
+import { getDaysInMonth, isSunday, format } from 'date-fns';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import fs from 'fs';
 import path from 'path';
 
-// Sample holidays. Must be consistent across both API files.
-const holidays = [
+// Sample holidays.
+const staticHolidays = [
   '2025-01-01', // New Year's Day
   '2025-02-17', // President's Day
   '2025-05-26', // Memorial Day
@@ -19,12 +19,6 @@ const holidays = [
 
 // Type for the schedule object
 type Schedule = { [date: string]: string[] };
-
-// Function to check if a date is a business day
-const isBusinessDay = (date: Date): boolean => {
-  const formattedDate = format(date, 'yyyy-MM-dd');
-  return !isSunday(date) && !isSaturday(date) && !holidays.includes(formattedDate);
-};
 
 // Function to shuffle an array (Fisher-Yates shuffle)
 const shuffleArray = (array: string[]) => {
@@ -41,7 +35,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 
   // Extract and validate input
-  const { month, year, employees } = req.body;
+  const { month, year, employees, holidays } = req.body; // ⭐ Get holidays from the body
 
   if (
     !month ||
@@ -49,8 +43,17 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     !Array.isArray(employees) ||
     employees.length < 2
   ) {
-    return res.status(400).json({ message: 'Invalid input: month, year and at least two employees are required.' });
+    return res.status(400).json({ message: 'Invalid input: month, year, and at least two employees are required.' });
   }
+
+  // ⭐ Combine static and user-provided holidays
+  const allHolidays = [...staticHolidays, ...(holidays || [])];
+
+  // Function to check if a date is a business day
+  const isBusinessDay = (date: Date): boolean => {
+    const formattedDate = format(date, 'yyyy-MM-dd');
+    return !isSunday(date) && !allHolidays.includes(formattedDate);
+  };
 
   try {
     const numDaysInMonth = getDaysInMonth(new Date(year, month - 1));

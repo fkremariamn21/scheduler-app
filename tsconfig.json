@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ES2017",
+    // ... other options
     "lib": [
       "dom",
       "dom.iterable",
@@ -9,14 +9,20 @@
     "allowJs": true,
     "skipLibCheck": true,
     "strict": false,
+    "forceConsistentCasingInFileNames": true,
     "noEmit": true,
-    "incremental": true,
-    "module": "esnext",
     "esModuleInterop": true,
+    "module": "esnext",
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "incremental": true,
+    "types": [
+      "node"
+    ] // Add this line
+    ,
+    "target": "ES2017"
   },
   "include": [
     "next-env.d.ts",
