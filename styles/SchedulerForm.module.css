@@ -1,4 +1,4 @@
-/* Your provided component styles */
+/* styles/SchedulerForm.module.css */
 .container {
   padding: 2rem;
   max-width: 800px;
@@ -14,16 +14,19 @@
   color: #333;
   font-size: x-large;
 }
+
 .title1 {
   text-align: center;
   color: #8B4513;
   font-size: xx-large;
 }
+
 .title2 {
   text-align: center;
   color: #FFD700;
   font-size: xx-large;
 }
+
 .form {
   display: flex;
   flex-direction: column;
@@ -108,4 +111,28 @@
 .scheduleTable th {
   background-color: #f2f2f2;
   font-weight: bold;
+}
+
+/* ⭐ New styles for the buttons and footer */
+.buttonContainer {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.backButton {
+   background-color: #8B4513;
+}
+
+.backButton:hover {
+  background-color: #5a6268;
+}
+
+.footer { 
+  margin-top: 2rem;
+  padding: 1rem;
+  border-top: 1px solid #ccc;
+  text-align: center;
+  width: 100%;
 }

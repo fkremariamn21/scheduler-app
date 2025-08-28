@@ -9,7 +9,7 @@ const WelcomePage: React.FC = () => {
   const router = useRouter();
 
   const handleContinue = () => {
-    router.push('/scheduler');
+    router.push('/Scheduler');
   };
 
   return (
