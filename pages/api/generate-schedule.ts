@@ -1,0 +1,102 @@
+// pages/api/generate-schedule.ts
+
+import { getDaysInMonth, isSunday, isSaturday, format } from 'date-fns';
+import type { NextApiRequest, NextApiResponse } from 'next';
+import fs from 'fs';
+import path from 'path';
+
+// Sample holidays. Must be consistent across both API files.
+const holidays = [
+  '2025-01-01', // New Year's Day
+  '2025-02-17', // President's Day
+  '2025-05-26', // Memorial Day
+  '2025-07-04', // Independence Day
+  '2025-09-01', // Labor Day
+  '2025-11-27', // Thanksgiving
+  '2025-11-28', // Day after Thanksgiving
+  '2025-12-25', // Christmas Day
+];
+
+// Type for the schedule object
+type Schedule = { [date: string]: string[] };
+
+// Function to check if a date is a business day
+const isBusinessDay = (date: Date): boolean => {
+  const formattedDate = format(date, 'yyyy-MM-dd');
+  return !isSunday(date) && !isSaturday(date) && !holidays.includes(formattedDate);
+};
+
+// Function to shuffle an array (Fisher-Yates shuffle)
+const shuffleArray = (array: string[]) => {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+};
+
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method !== 'POST') {
+    res.setHeader('Allow', ['POST']);
+    return res.status(405).json({ message: 'Method Not Allowed' });
+  }
+
+  // Extract and validate input
+  const { month, year, employees } = req.body;
+
+  if (
+    !month ||
+    !year ||
+    !Array.isArray(employees) ||
+    employees.length < 2
+  ) {
+    return res.status(400).json({ message: 'Invalid input: month, year and at least two employees are required.' });
+  }
+
+  try {
+    const numDaysInMonth = getDaysInMonth(new Date(year, month - 1));
+    const schedule: Schedule = {};
+    let lastAssigned: string[] = [];
+
+    for (let day = 1; day <= numDaysInMonth; day++) {
+      const currentDate = new Date(year, month - 1, day);
+
+      if (!isBusinessDay(currentDate)) {
+        continue; // Skip non-business days
+      }
+
+      // Available employees for the day (exclude last assigned)
+      let availableEmployees = employees.filter(emp => !lastAssigned.includes(emp));
+
+      // If not enough employees, reset to full list
+      if (availableEmployees.length < 2) {
+        availableEmployees = [...employees];
+      }
+
+      shuffleArray(availableEmployees);
+
+      const assigned = availableEmployees.slice(0, 2);
+
+      schedule[format(currentDate, 'yyyy-MM-dd')] = assigned;
+      lastAssigned = assigned;
+    }
+
+    // ⭐ Save the generated schedule to a file
+    const schedulesDir = path.join(process.cwd(), 'schedules');
+    const filename = `schedule-${year}-${month}.json`;
+
+    // Ensure the 'schedules' directory exists
+    if (!fs.existsSync(schedulesDir)) {
+      fs.mkdirSync(schedulesDir);
+    }
+
+    // Write the schedule to the JSON file
+    fs.writeFileSync(path.join(schedulesDir, filename), JSON.stringify(schedule, null, 2));
+
+    // Send the schedule back to the frontend
+    return res.status(200).json({ schedule });
+
+  } catch (error) {
+    console.error('Schedule generation error:', error);
+    return res.status(500).json({ message: 'Internal server error.' });
+  }
+}
