@@ -6,14 +6,14 @@ import * as XLSX from 'xlsx'; // Import the XLSX library
 
 // Sample holidays.
 const staticHolidays = [
-  '2025-01-01', // New Year's Day
-  '2025-02-17', // President's Day
-  '2025-05-26', // Memorial Day
-  '2025-07-04', // Independence Day
-  '2025-09-01', // Labor Day
-  '2025-11-27', // Thanksgiving
-  '2025-11-28', // Day after Thanksgiving
-  '2025-12-25', // Christmas Day
+  //'2025-01-01', // New Year's Day
+ // '2025-02-17', // President's Day
+//  '2025-05-26', // Memorial Day
+  //'2025-07-04', // Independence Day
+ // '2025-09-01', // Labor Day
+ // '2025-11-27', // Thanksgiving
+//  '2025-11-28', // Day after Thanksgiving
+//  '2025-12-25', // Christmas Day
 ];
 
 // Type for the schedule object
