@@ -114,7 +114,7 @@ const SchedulerPage: React.FC = () => {
       <Head>
         <title>COB Runner Scheduler</title>
         <meta name="description" content="An automatic scheduler for the Close of Business runner." />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicon1.ico" />
       </Head>
       <div className={styles.container}>
         <h1 className={styles.title1}>Nib International Bank</h1>
