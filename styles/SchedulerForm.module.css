@@ -156,3 +156,25 @@
   text-align: center;
   width: 100%;
 }
+@media (max-width: 600px) {
+  /* ⭐ Responsive styles for mobile */
+  .container {
+    padding: 1rem;
+    margin: 1rem auto;
+  }
+
+  .rowGroup {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .buttonContainer {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .shortInput,
+  .shortInputHoliday {
+    width: 100%;
+  }
+}
